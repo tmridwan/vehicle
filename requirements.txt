@@ -1,7 +1,7 @@
+python_version>=3.10,<3.11
 torch==2.1.2
 torchvision==0.16.2
 fastai==2.7.14
-fastprogress
+gradio==4.44.1
 pillow
 ipython
-gradio

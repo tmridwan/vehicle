@@ -1,22 +1,26 @@
-import gradio as gr
 from fastai.vision.all import load_learner
-import pathlib, platform
+import gradio as gr
+from PIL import Image
 
-# Fix Windows → Linux path issue
-if platform.system() != "Windows":
-    pathlib.WindowsPath = pathlib.PosixPath
-
-# Load model safely (CPU only)
+# Load model (FastAI-safe)
 model = load_learner("vehicle_model.pkl", cpu=True)
 
-def recognize_image(image):
-    pred, idx, probs = model.predict(image)
-    return dict(zip(model.dls.vocab, map(float, probs)))
+vehicle_labels = model.dls.vocab
 
-gr.Interface(
-    fn=recognize_image,
-    inputs=gr.Image(type="pil"),
-    outputs=gr.Label(num_top_classes=5),
-    title="🚗 Vehicle Recognizer",
-    description="Upload an image to identify the vehicle"
-).launch()
+def recognize_image(image: Image.Image):
+    pred, idx, probs = model.predict(image)
+    return {
+        vehicle_labels[i]: float(probs[i])
+        for i in range(len(vehicle_labels))
+    }
+
+with gr.Blocks() as demo:
+    gr.Markdown("# 🚗 Vehicle Classifier")
+
+    img = gr.Image(type="pil", label="Upload image")
+    out = gr.Label(num_top_classes=5)
+
+    btn = gr.Button("Submit")
+    btn.click(fn=recognize_image, inputs=img, outputs=out)
+
+demo.launch()
