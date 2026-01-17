@@ -7,29 +7,6 @@ import gradio as gr
 from fastai.vision.all import load_learner, PILImage
 from huggingface_hub import hf_hub_download
 
-# --- Class labels ---
-VEHICLE_LABELS = [
-    "Pickup truck", "SUV", "Van / Minivan", "Station wagon",
-    "Convertible", "Sports car", "Hatchback", "Coupe", "Sedan",
-    "Limousine", "Taxi", "Police car", "Ambulance", "Fire truck",
-    "Light truck", "Heavy truck", "Semi truck", "Tow truck",
-    "Garbage truck", "Cement mixer truck", "Dump truck",
-    "Refrigerated truck", "Flatbed truck", "Tanker truck",
-    "Bus", "Mini-bus", "School bus", "Coach bus",
-    "Tram", "Train", "Subway train",
-    "Bicycle", "Motorcycle", "Scooter", "Moped", "Dirt bike",
-    "Three-wheeler", "Tricycle",
-    "Tractor", "Combine harvester", "Bulldozer", "Excavator",
-    "Backhoe loader", "Skid steer", "Forklift",
-    "Road roller", "Crane",
-    "Airplane", "Helicopter", "Glider", "Hot air balloon",
-    "Drone", "Jet", "Cargo aircraft", "Seaplane",
-    "Boat", "Ship", "Sailboat", "Yacht", "Speedboat",
-    "Fishing boat", "Cargo ship", "Cruise ship",
-    "Submarine", "Kayak", "Jet ski",
-    "Carriage", "Rickshaw", "Handcart",
-    "Wheelchair", "Skateboard", "Roller skates"
-]
 
 # --- Lazy-loaded model ---
 _learner = None
@@ -55,16 +32,19 @@ def recognize_image(image):
     learner = load_model()
     img = PILImage.create(image)
 
-    _, _, probs = learner.predict(img)
+    pred, idx, probs = learner.predict(img)
+
+    vocab = learner.dls.vocab  # ✅ model’s real labels
 
     top_probs, top_idxs = probs.topk(5)
     top_probs = top_probs.tolist()
     top_idxs = top_idxs.tolist()
 
     return {
-        VEHICLE_LABELS[int(i)]: float(p)
+        vocab[int(i)]: float(p)
         for p, i in zip(top_probs, top_idxs)
     }
+
 
 # --- Gradio UI ---
 demo = gr.Interface(
