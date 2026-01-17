@@ -56,15 +56,20 @@ def recognize_image(image):
     pred, idx, probs = model.predict(image)
     return dict(zip(vehicle_labels, map(float, probs)))
 
-image = gr.inputs.Image(shape=(192,192))
-label = gr.outputs.Label(num_top_classes=5)
-examples = [
-    'b.jpg',
-    'c.jpg',
-    'h.jpg',
-    'e.png'
-    ]
+# Create Gradio interface with modern API
+demo = gr.Interface(
+    fn=recognize_image, 
+    inputs=gr.Image(label="Upload vehicle image"),
+    outputs=gr.Label(num_top_classes=5, label="Predictions"),
+    examples=[
+        'b.jpg',
+        'c.jpg',
+        'h.jpg',
+        'e.png'
+    ],
+    title="Vehicle Classification",
+    description="Upload an image of a vehicle to get predictions of what type of vehicle it is."
+)
 
-
-iface = gr.Interface(fn=recognize_image, inputs=image, outputs=label, examples=examples)
-iface.launch(inline=False)
+if __name__ == "__main__":
+    demo.launch()
