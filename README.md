@@ -1,14 +1,16 @@
 ---
-title: Vehicle Recognizer
-emoji: 🚀
-colorFrom: gray
-colorTo: red
+title: Vehicle Classification
+emoji: 🚗
+colorFrom: blue
+colorTo: green
 sdk: gradio
-sdk_version: 6.2.0
+sdk_version: 5.9.1
 app_file: app.py
 pinned: false
 license: mit
-short_description: recognizes every types of vehicle
+short_description: Classify 60+ types of vehicles using AI
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+# Vehicle Classification
+
+Upload an image of any vehicle and get AI-powered predictions for 60+ vehicle types including cars, trucks, aircraft, watercraft, and more!
