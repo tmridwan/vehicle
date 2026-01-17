@@ -2,7 +2,9 @@
 import pathlib
 pathlib.WindowsPath = pathlib.PosixPath
 
+import io
 import gradio as gr
+from PIL import Image, ImageOps
 from fastai.vision.all import load_learner, PILImage
 
 _learner = None
@@ -15,11 +17,20 @@ def load_model():
             _learner.dls.cpu()
     return _learner
 
-def recognize_image(image):
+def recognize_image(file):
     learner = load_model()
-    img = PILImage.create(image)
 
-    _, _, probs = learner.predict(img)
+    file_path = file if isinstance(file, str) else file.name
+
+    with open(file_path, "rb") as f:
+        raw = f.read()
+
+    pil_img = Image.open(io.BytesIO(raw))
+    pil_img = ImageOps.exif_transpose(pil_img).convert("RGB")
+
+    fa_img = PILImage.create(pil_img)
+
+    _, _, probs = learner.predict(fa_img)
 
     vocab = list(learner.dls.vocab) if hasattr(learner, "dls") else None
 
@@ -33,7 +44,7 @@ def recognize_image(image):
 
 demo = gr.Interface(
     fn=recognize_image,
-    inputs=gr.Image(type="pil", label="Upload an image"),
+    inputs=gr.File(file_types=["image"], label="Upload an image"),
     outputs=gr.Label(num_top_classes=5, label="Top Predictions"),
     title="🚗 Vehicle Classification",
     description="Upload an image to classify the vehicle type."
