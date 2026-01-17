@@ -2,3 +2,4 @@ fastai
 torch
 torchvision
 pillow
+ipython
