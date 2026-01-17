@@ -6,16 +6,17 @@ import io
 import gradio as gr
 from PIL import Image, ImageOps
 from fastai.vision.all import load_learner, PILImage
+import torch
 
 _learner = None
+
 
 def load_model():
     global _learner
     if _learner is None:
-        _learner = load_learner("vehicle_model.pkl")
-        if hasattr(_learner, "dls"):
-            _learner.dls.cpu()
+        _learner = torch.load("vehicle_model.pkl", map_location="cpu")
     return _learner
+
 
 def recognize_image(file):
     learner = load_model()
