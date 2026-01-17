@@ -17,17 +17,37 @@ def load_model():
         _learner = torch.load("vehicle_model.pkl", map_location="cpu")
     return _learner
 
+import io
+from PIL import Image, ImageOps, UnidentifiedImageError
+
+def decode_image(file_path: str) -> Image.Image:
+    with open(file_path, "rb") as f:
+        raw = f.read()
+
+    # Debug info (shows in Space logs)
+    print("Uploaded file:", file_path)
+    print("File size:", len(raw))
+    print("First bytes:", raw[:16])
+
+    try:
+        img = Image.open(io.BytesIO(raw))
+        img = ImageOps.exif_transpose(img).convert("RGB")
+        return img
+    except UnidentifiedImageError:
+        raise gr.Error(
+            "❌ Unsupported image format. "
+            "Please upload a standard JPG or PNG image "
+            "(not HEIC / AVIF / WEBP)."
+        )
+
 
 def recognize_image(file):
     learner = load_model()
 
+    # gr.File returns a path or object
     file_path = file if isinstance(file, str) else file.name
 
-    with open(file_path, "rb") as f:
-        raw = f.read()
-
-    pil_img = Image.open(io.BytesIO(raw))
-    pil_img = ImageOps.exif_transpose(pil_img).convert("RGB")
+    pil_img = decode_image(file_path)
 
     fa_img = PILImage.create(pil_img)
 
@@ -41,7 +61,9 @@ def recognize_image(file):
 
     if vocab:
         return {vocab[int(i)]: float(p) for p, i in zip(top_probs, top_idxs)}
+
     return {f"class_{int(i)}": float(p) for p, i in zip(top_probs, top_idxs)}
+
 
 demo = gr.Interface(
     fn=recognize_image,
