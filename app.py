@@ -17,7 +17,7 @@ def load_model():
     if _learner is None:
         model_path = hf_hub_download(
             repo_id="tmridwan03/vehicle_recognizer",
-            filename="model.pkl"
+            filename="vehicle_model.pkl"
         )
         _learner = load_learner(model_path)
         if hasattr(_learner, "dls"):
