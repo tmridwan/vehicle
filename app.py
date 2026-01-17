@@ -59,16 +59,16 @@ def recognize_image(image):
 # Create Gradio interface with modern API
 demo = gr.Interface(
     fn=recognize_image, 
-    inputs=gr.Image(label="Upload vehicle image"),
-    outputs=gr.Label(num_top_classes=5, label="Predictions"),
+    inputs=gr.Image(type="pil"),
+    outputs=gr.Label(num_top_classes=5),
     examples=[
         'b.jpg',
         'c.jpg',
         'h.jpg',
         'e.png'
     ],
-    title="Vehicle Classification",
-    description="Upload an image of a vehicle to get predictions of what type of vehicle it is."
+    title="🚗 Vehicle Classification",
+    description="Upload an image of a vehicle to get AI-powered predictions for 60+ vehicle types!"
 )
 
 if __name__ == "__main__":
