@@ -1,7 +1,8 @@
-fastai
-torch
-torchvision
-gradio
-pillow
-ipython
-fastprogress
+fastai==2.7.18
+fastcore==1.5.55
+fasttransform==0.0.2
+torch==2.3.1
+torchvision==0.18.1
+gradio==4.44.1
+gradio_client==1.3.0
+huggingface_hub
