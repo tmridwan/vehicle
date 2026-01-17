@@ -18,7 +18,7 @@ with gr.Blocks() as demo:
     gr.Markdown("# 🚗 Vehicle Classifier")
 
     img = gr.Image(type="pil", label="Upload image")
-    out = gr.Label(num_top_classes=5)
+    out = gr.Label(num_top_classes=5, label="Prediction")
 
     btn = gr.Button("Submit")
     btn.click(fn=recognize_image, inputs=img, outputs=out)
