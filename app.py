@@ -41,33 +41,30 @@ vehicle_labels = [
     "Wheelchair", "Skateboard", "Roller skates"
 ]
 
+# Fix for cross-platform compatibility (Windows -> Linux)
+import pathlib
+import platform
+
+# Monkey-patch WindowsPath for Linux compatibility
+if platform.system() != 'Windows':
+    pathlib.WindowsPath = pathlib.PosixPath
+
 # Load model with torch, allowing fastai classes
-try:
-    model = torch.load('vehicle_model.pkl', map_location='cpu', weights_only=False)
-except Exception as e:
-    # Fallback: try with safe_globals
-    from pathlib import PosixPath, WindowsPath
-    torch.serialization.add_safe_globals([WindowsPath, PosixPath])
-    model = torch.load('vehicle_model.pkl', map_location='cpu', weights_only=False)
+model = torch.load('vehicle_model.pkl', map_location='cpu', weights_only=False)
 
 def recognize_image(image):
     pred, idx, probs = model.predict(image)
     return dict(zip(vehicle_labels, map(float, probs)))
 
-# Create Gradio interface with modern API
-demo = gr.Interface(
-    fn=recognize_image, 
-    inputs=gr.Image(shape=(192, 192), label="Upload vehicle image"),
-    outputs=gr.Label(num_top_classes=5, label="Predictions"),
-    examples=[
-        'b.jpg',
-        'c.jpg',
-        'h.jpg',
-        'e.png'
-    ],
-    title="Vehicle Classification",
-    description="Upload an image of a vehicle to get predictions of what type of vehicle it is."
-)
+image = gr.inputs.Image(shape=(192,192))
+label = gr.outputs.Label(num_top_classes=5)
+examples = [
+    'b.jpg',
+    'c.jpg',
+    'h.jpg',
+    'e.png'
+    ]
 
-if __name__ == "__main__":
-    demo.launch()
+
+iface = gr.Interface(fn=recognize_image, inputs=image, outputs=label, examples=examples)
+iface.launch(inline=False)
