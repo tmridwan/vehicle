@@ -1,4 +1,5 @@
 fastai
-ipython
+torch
+torchvision
 gradio
-Pillow
+pillow
