@@ -6,5 +6,5 @@ def test(img):
 gr.Interface(
     fn=test,
     inputs=gr.Image(),
-    outputs="text"
+    outputs=gr.Textbox()
 ).launch()
