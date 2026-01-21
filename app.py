@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import gradio as gr
 from PIL import Image, ImageOps, UnidentifiedImageError
-from fastai.vision.all import PILImage
+from fastai.vision.all import PILImage, load_learner
 import torch
 
 _learner = None
@@ -21,7 +21,7 @@ except ImportError:
 def load_model():
     global _learner
     if _learner is None:
-        _learner = torch.load("vehicle_model.pkl", map_location="cpu")
+        _learner = load_learner("vehicle_model.pkl")
     return _learner
 
 
