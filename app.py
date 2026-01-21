@@ -196,13 +196,6 @@ def _class_guide() -> str:
     return "\n".join(lines)
 
 
-example_images = [
-    "https://upload.wikimedia.org/wikipedia/commons/3/3e/Tesla_Model_3_parked%2C_front_driver_side.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/9/98/2018_Toyota_Camry_SE_front_3.10.18.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/e/e0/2019_Ford_Ranger_Wildtrak_2.0.jpg",
-]
-
-
 with gr.Blocks(title="🚗 Vehicle Classification") as demo:
     gr.Markdown(
         "# Vehicle Classification\nUpload a vehicle image from file, drag-and-drop, or the camera."
@@ -220,9 +213,6 @@ with gr.Blocks(title="🚗 Vehicle Classification") as demo:
                 sources=["webcam"],
                 type="pil",
             )
-
-            gr.Markdown("**Examples**")
-            gr.Examples(examples=example_images, inputs=image_file)
 
             with gr.Accordion("Advanced", open=False):
                 resize_longest = gr.Slider(
