@@ -217,7 +217,7 @@ with gr.Blocks(title="🚗 Vehicle Classification") as demo:
             )
             webcam_input = gr.Image(
                 label="Capture from camera",
-                source="webcam",
+                sources=["webcam"],
                 type="pil",
             )
 
