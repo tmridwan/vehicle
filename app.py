@@ -284,5 +284,46 @@ with gr.Blocks(title="🚗 Vehicle Classification") as demo:
     webcam_input.change(_update_class_guide, inputs=None, outputs=class_md)
 
 
+# Simple API interface for external calls
+def predict_simple(image):
+    """Simple prediction function for API calls"""
+    learner = load_model()
+    if isinstance(image, str):
+        img = Image.open(image).convert("RGB")
+    else:
+        img = image.convert("RGB")
+    
+    fa_img = PILImage.create(img)
+    _, _, probs = learner.predict(fa_img)
+    
+    vocab = list(learner.dls.vocab) if hasattr(learner, "dls") else None
+    top_probs, top_idxs = probs.topk(5)
+    
+    if vocab:
+        top_label = vocab[int(top_idxs[0])]
+    else:
+        top_label = f"class_{int(top_idxs[0])}"
+    
+    return top_label
+
+
+# API interface for external calls
+api = gr.Interface(
+    fn=predict_simple,
+    inputs=gr.Image(type="pil"),
+    outputs=gr.Text(label="Prediction"),
+    examples=None,
+    title="Vehicle Classifier API"
+)
+
+
 if __name__ == "__main__":
-    demo.queue().launch(server_name="0.0.0.0", server_port=7860)
+    # Launch both the main demo and API
+    gr.TabbedInterface(
+        [demo, api],
+        ["Full Interface", "Simple API"]
+    ).queue().launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False
+    )
